@@ -1,0 +1,32 @@
+{
+  "name": "chromium-browser-app",
+  "productName": "Chromium Browser",
+  "version": "1.0.0",
+  "description": "A fully usable Chromium-based browser for Windows",
+  "main": "main.js",
+  "author": "Cline",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.cline.chromiumbrowser",
+    "productName": "Chromium Browser",
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Chromium Browser"
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^25.1.8"
+  }
+}
