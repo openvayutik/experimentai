@@ -5,9 +5,16 @@ contextBridge.exposeInMainWorld('browserAPI', {
   goBack: () => ipcRenderer.send('go-back'),
   goForward: () => ipcRenderer.send('go-forward'),
   reload: () => ipcRenderer.send('reload'),
-  newWindow: () => ipcRenderer.send('new-window'),
+  newTab: () => ipcRenderer.send('new-tab'),
+  closeTab: (id) => ipcRenderer.send('close-tab', id),
+  switchTab: (id) => ipcRenderer.send('switch-tab', id),
   openDevTools: () => ipcRenderer.send('open-devtools'),
+  toggleTheme: () => ipcRenderer.send('toggle-theme'),
   openExternal: (url) => ipcRenderer.send('open-external', url),
-  onNavigation: (cb) => ipcRenderer.on('navigate-event', cb),
-  saveDialog: (defaultPath) => ipcRenderer.invoke('save-dialog', defaultPath)
+  minimize: () => ipcRenderer.send('minimize'),
+  maximize: () => ipcRenderer.send('maximize'),
+  closeApp: () => ipcRenderer.send('close-app'),
+  saveDialog: (defaultPath) => ipcRenderer.invoke('save-dialog', defaultPath),
+  on: (channel, cb) => ipcRenderer.on(channel, cb),
+  off: (channel, cb) => ipcRenderer.removeListener(channel, cb)
 });

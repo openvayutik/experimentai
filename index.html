@@ -3,157 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chromium Browser</title>
+<title>Chromium Browser Pro</title>
 <style>
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-hover: #2d3748;
+    --border: #334155;
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --danger: #ef4444;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: #202124; color: #3c4043; overflow: hidden; height: 100vh;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    -webkit-user-select: none;
   }
   #titlebar {
-    height: 32px; background: #202124; display: flex; align-items: center;
-    justify-content: space-between; padding: 0 10px; user-select: none;
-    -webkit-app-region: drag;
+    height: 40px; background: var(--bg); display: flex; align-items: center;
+    justify-content: space-between; padding: 0 14px; user-select: none;
+    -webkit-app-region: drag; border-bottom: 1px solid var(--border); z-index: 100;
   }
-  #titlebar .app-icon { width: 16px; height: 16px; margin-right: 6px; }
-  #titlebar h1 { color: #e8eaed; font-size: 12px; font-weight: 500; letter-spacing: 0.4px; }
-  #window-controls { display: flex; gap: 6px; -webkit-app-region: no-drag; }
-  #window-controls button {
-    width: 32px; height: 32px; border: none; background: transparent;
-    color: #e8eaed; cursor: pointer; font-size: 12px; border-radius: 4px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  #window-controls button:hover { background: #3c4043; }
-  #window-controls #close-btn:hover { background: #d93025; }
+  #titlebar .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; }
+  #titlebar .brand-icon { width: 20px; height: 20px; border-radius: 5px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); display: flex; align-items: center; justify-content: center; font-size: 12px; color: #fff; }
+  #titlebar h1 { font-size: 14px; color: var(--text); }
+  #titlebar .window-controls { display: flex; gap: 4px; -webkit-app-region: no-drag; }
+  #titlebar .win-btn { width: 44px; height: 40px; border: none; background: transparent; color: var(--text); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: background 0.2s; }
+  #titlebar .win-btn:hover { background: var(--surface-hover); }
+  #titlebar #close-btn:hover { background: var(--danger); }
 
   #tabstrip {
-    height: 44px; background: #292a2d; display: flex; align-items: center;
-    padding: 0 8px; overflow-x: auto; border-bottom: 1px solid #3c4043;
-    user-select: none;
+    height: 46px; background: var(--surface); display: flex; align-items: center;
+    padding: 0 10px; overflow-x: auto; border-bottom: 1px solid var(--border); user-select: none;
   }
   .tab {
-    height: 34px; min-width: 150px; max-width: 260px; background: #292a2d;
-    border: 1px solid #3c4043; border-bottom: none; border-radius: 6px 6px 0 0;
-    margin-right: 6px; color: #e8eaed; display: flex; align-items: center;
-    gap: 6px; padding: 0 10px; cursor: pointer; position: relative;
-    font-size: 13px; overflow: hidden;
+    height: 36px; min-width: 140px; max-width: 280px; background: var(--surface);
+    border: 1px solid var(--border); border-bottom: none; border-radius: 8px 8px 0 0;
+    margin-right: 8px; color: var(--text-muted); display: flex; align-items: center;
+    gap: 8px; padding: 0 12px; cursor: pointer; position: relative;
+    font-size: 13px; overflow: hidden; transition: all 0.2s;
   }
-  .tab:hover { background: #3c4043; }
-  .tab.active { background: #202124; border-color: #5f6368; font-weight: 500; }
-  .tab .favicon { width: 16px; height: 16px; border-radius: 2px; }
-  .tab .close {
-    width: 16px; height: 16px; background: transparent; border: none;
-    color: #9aa0a6; cursor: pointer; font-size: 14px; line-height: 1;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .tab .close:hover { color: #e8eaed; background: #3c4043; border-radius: 2px; }
-  .tab-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
-  #new-tab-btn {
-    width: 34px; height: 34px; border: 1px solid #3c4043; background: #292a2d;
-    color: #e8eaed; border-radius: 6px; cursor: pointer; display: flex;
-    align-items: center; justify-content: center; font-size: 16px; margin-left: 4px;
-  }
-  #new-tab-btn:hover { background: #3c4043; }
+  .tab:hover { background: var(--surface-hover); color: var(--text); }
+  .tab.active { background: var(--bg); border-color: var(--border); border-bottom: 2px solid var(--accent); color: var(--text); font-weight: 600; }
+  .tab .favicon { width: 16px; height: 16px; border-radius: 3px; flex-shrink: 0; }
+  .tab-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 60px; }
+  .tab .close-btn { width: 20px; height: 20px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.2s; flex-shrink: 0; }
+  .tab .close-btn:hover { background: var(--danger); color: #fff; }
+  #new-tab-btn { width: 36px; height: 36px; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-left: 6px; transition: all 0.2s; }
+  #new-tab-btn:hover { background: var(--surface-hover); }
 
   #navbar {
-    height: 44px; background: #202124; display: flex; align-items: center;
-    padding: 0 12px; gap: 8px; border-bottom: 1px solid #3c4043;
+    height: 48px; background: var(--bg); display: flex; align-items: center;
+    padding: 0 14px; gap: 8px; border-bottom: 1px solid var(--border);
   }
-  .nav-btn {
-    width: 34px; height: 34px; border: 1px solid #3c4043; background: #292a2d;
-    color: #e8eaed; border-radius: 4px; cursor: pointer; display: flex;
-    align-items: center; justify-content: center; font-size: 14px;
-  }
-  .nav-btn:hover { background: #3c4043; }
+  .nav-btn { width: 40px; height: 40px; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: all 0.2s; }
+  .nav-btn:hover { background: var(--surface-hover); }
   .nav-btn:disabled { opacity: 0.4; cursor: default; }
-  #urlbar {
-    flex: 1; height: 34px; background: #292a2d; border: 1px solid #3c4043;
-    border-radius: 4px; color: #e8eaed; padding: 0 10px; font-size: 14px;
-    outline: none;
-  }
-  #urlbar:focus { border-color: #1a73e8; }
-  #urlbar::placeholder { color: #9aa0a6; }
-  .go-btn {
-    width: 34px; height: 34px; border: 1px solid #3c4043; background: #1a73e8;
-    color: #fff; border-radius: 4px; cursor: pointer; display: flex;
-    align-items: center; justify-content: center; font-size: 14px;
-  }
-  .go-btn:hover { background: #1557b0; }
+  #urlbar { flex: 1; height: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 0 14px; font-size: 14px; outline: none; transition: all 0.2s; }
+  #urlbar:focus { border-color: var(--accent); }
+  #urlbar::placeholder { color: var(--text-muted); }
+  .go-btn { width: 40px; height: 40px; border: none; background: var(--accent); color: #fff; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: all 0.2s; }
+  .go-btn:hover { background: var(--accent-hover); }
+
+  #theme-toggle { width: 40px; height: 40px; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-left: 8px; transition: all 0.2s; }
+  #theme-toggle:hover { background: var(--surface-hover); }
 
   #bookmarks-bar {
-    height: 30px; background: #292a2d; border-bottom: 1px solid #3c4043;
-    display: flex; align-items: center; padding: 0 10px; gap: 4px;
-    overflow-x: auto; font-size: 12px;
+    height: 34px; background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 14px; gap: 8px;
+    overflow-x: auto; font-size: 12px; color: var(--text-muted);
   }
-  .bookmark {
-    height: 24px; background: #202124; border: 1px solid #3c4043;
-    border-radius: 4px; padding: 0 8px; display: flex; align-items: center;
-    gap: 4px; color: #e8eaed; cursor: pointer; white-space: nowrap;
-  }
-  .bookmark:hover { background: #3c4043; }
+  .bookmark { height: 26px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; display: flex; align-items: center; gap: 6px; color: var(--text); cursor: pointer; white-space: nowrap; transition: all 0.2s; font-size: 12px; }
+  .bookmark:hover { background: var(--surface-hover); }
+
   #webview-container { flex: 1; overflow: hidden; position: relative; background: #000; }
   webview { width: 100%; height: 100%; }
   #app { display: flex; flex-direction: column; height: 100vh; }
   #content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
   #loading {
-    position: absolute; inset: 0; background: #202124; display: flex;
+    position: absolute; inset: 0; background: var(--bg); display: flex;
     flex-direction: column; align-items: center; justify-content: center;
-    gap: 12px; z-index: 10; color: #e8eaed; font-size: 14px;
+    gap: 16px; z-index: 50; color: var(--text);
   }
-  .spinner {
-    width: 32px; height: 32px; border: 3px solid #3c4043;
-    border-top-color: #1a73e8; border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
+  .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .hidden { display: none !important; }
+
+  #sidebar { width: 280px; background: var(--surface); border-right: 1px solid var(--border); display: none; flex-direction: column; z-index: 200; }
+  #sidebar.visible { display: flex; }
+  .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .sidebar-header h3 { font-size: 15px; color: var(--text); }
+  .sidebar-close { width: 32px; height: 32px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .sidebar-content { flex: 1; overflow-y: auto; padding: 12px; }
+  .sidebar-item { padding: 10px 12px; border-radius: 8px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px; margin-bottom: 6px; transition: background 0.2s; }
+  .sidebar-item:hover { background: var(--surface-hover); }
+
+  #newtab-page { position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; z-index: 10; color: var(--text); }
+  #newtab-page h2 { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; }
+  #newtab-page p { color: var(--text-muted); font-size: 16px; }
+  .quick-links { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+  .quick-link { width: 120px; height: 140px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text); text-decoration: none; transition: all 0.2s; font-size: 13px; }
+  .quick-link:hover { background: var(--surface-hover); border-color: var(--accent); transform: translateY(-2px); }
+  .quick-link .icon { font-size: 36px; }
+</style>
 </style>
 </head>
 <body>
 <div id="app">
   <div id="titlebar">
-    <div style="display:flex;align-items:center;gap:8px;">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a73e8'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E" class="app-icon" alt="">
-      <h1 id="app-title">Chromium Browser</h1>
+    <div class="brand">
+      <div class="brand-icon">C</div>
+      <h1 id="app-title">Chromium Browser Pro</h1>
     </div>
     <div id="window-controls">
-      <button id="min-btn">−</button>
-      <button id="max-btn">□</button>
-      <button id="close-btn">×</button>
+      <button class="win-btn" id="min-btn" onclick="browserAPI.minimize()">−</button>
+      <button class="win-btn" id="max-btn" onclick="browserAPI.maximize()">□</button>
+      <button class="win-btn" id="close-btn" onclick="browserAPI.closeApp()">×</button>
     </div>
   </div>
 
   <div id="content">
-    <div id="tabstrip">
-      <div class="tab active" id="tab-0">
-        <img class="favicon" src="" alt="">
-        <span class="tab-title">New Tab</span>
-        <button class="close" onclick="closeTab(event, 0)">×</button>
-      </div>
-      <button id="new-tab-btn" onclick="newTab()">+</button>
-    </div>
-
+    <div id="tabstrip"></div>
     <div id="navbar">
       <button class="nav-btn" id="back-btn" onclick="goBack()" disabled>←</button>
       <button class="nav-btn" id="forward-btn" onclick="goForward()" disabled>→</button>
       <button class="nav-btn" id="reload-btn" onclick="reload()">↻</button>
       <input type="text" id="urlbar" placeholder="Search or type URL" spellcheck="false">
       <button class="go-btn" id="go-btn" onclick="loadUrl()">Go</button>
+      <button class="nav-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
     </div>
-
-    <div id="bookmarks-bar">
-      <div class="bookmark" onclick="navigateTo('https://www.google.com')">🔍 Google</div>
-      <div class="bookmark" onclick="navigateTo('https://www.youtube.com')">▶ YouTube</div>
-      <div class="bookmark" onclick="navigateTo('https://github.com')">⌨ GitHub</div>
-      <div class="bookmark" onclick="navigateTo('https://www.wikipedia.org')">📖 Wikipedia</div>
-    </div>
-
+    <div id="bookmarks-bar"></div>
     <div id="webview-container">
       <div id="loading" class="hidden">
-        <div class="spinner"></div>
-        <div>Loading...</div>
+        <div class="spinner"></div><div>Loading...</div>
       </div>
-      <webview id="main-webview" src="about:blank"></webview>
+      <div id="newtab-page">
+        <h2>Chromium Browser Pro</h2>
+        <p>Fast, secure, modern browsing</p>
+        <div class="quick-links" id="quick-links"></div>
+      </div>
+      <webview id="main-webview" src="about:blank" class="hidden"></webview>
     </div>
   </div>
 </div>
@@ -167,74 +163,148 @@
   const loading = document.getElementById('loading');
   const goBtn = document.getElementById('go-btn');
   const appTitle = document.getElementById('app-title');
+  const tabstrip = document.getElementById('tabstrip');
+  const newtabPage = document.getElementById('newtab-page');
+  const quickLinks = document.getElementById('quick-links');
+
+  let tabs = [{ id: 0, title: 'New Tab', url: 'about:blank', favicon: '' }];
+  let activeTabId = 0;
 
   function loadUrl() {
     let url = urlbar.value.trim();
     if (!url) return;
     if (!url.includes('://')) url = 'https://' + url;
-    window.browserAPI.navigate(url);
+    browserAPI.navigate(url);
   }
 
   function navigateTo(url) {
     urlbar.value = url;
-    window.browserAPI.navigate(url);
+    browserAPI.navigate(url);
   }
 
-  function goBack() { window.browserAPI.goBack(); }
-  function goForward() { window.browserAPI.goForward(); }
-  function reload() { window.browserAPI.reload(); }
+  function goBack() { browserAPI.goBack(); }
+  function goForward() { browserAPI.goForward(); }
+  function reload() { browserAPI.reload(); }
+  function toggleTheme() { browserAPI.toggleTheme(); }
 
   urlbar.addEventListener('keydown', (e) => { if (e.key === 'Enter') loadUrl(); });
 
-  let tabCount = 1;
-  function newTab() {
-    tabCount++;
-    const tab = document.createElement('div');
-    tab.className = 'tab active';
-    tab.id = 'tab-' + tabCount;
-    tab.innerHTML = '<img class="favicon" src="" alt=""><span class="tab-title">New Tab</span><button class="close" onclick="closeTab(event, ' + tabCount + ')">×</button>';
-    document.querySelectorAll('.tab').forEach(t => { t.classList.remove('active'); });
-    const strip = document.getElementById('tabstrip');
-    strip.insertBefore(tab, document.getElementById('new-tab-btn'));
-    tab.classList.add('active');
+  function renderTabs() {
+    tabstrip.innerHTML = '';
+    tabs.forEach(tab => {
+      const el = document.createElement('div');
+      el.className = 'tab' + (tab.id === activeTabId ? ' active' : '');
+      el.innerHTML = '<img class="favicon" src="' + (tab.favicon || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath fill=%22%2394a3b8%22 d=%22M12 2L2 7l10 5 10-5-10-5z%22/%3E%3C/svg%3E') + '" alt=""><span class="tab-title">' + tab.title + '</span><button class="close-btn" onclick="event.stopPropagation(); browserAPI.closeTab(' + tab.id + ')">×</button>';
+      el.onclick = () => browserAPI.switchTab(tab.id);
+      tabstrip.appendChild(el);
+    });
   }
 
-  window.closeTab = function closeTab(e, id) {
-    e.stopPropagation();
-    const el = document.getElementById('tab-' + id);
-    if (el) el.remove();
-  };
+  function addTab(tab) {
+    tabs.push(tab);
+    activeTabId = tab.id;
+    renderTabs();
+    showWebview();
+  }
 
-  document.getElementById('min-btn').onclick = () => { /* minimize handled by OS */ };
-  document.getElementById('max-btn').onclick = () => {};
-  document.getElementById('close-btn').onclick = () => window.close();
+  function removeTab(id) {
+    tabs = tabs.filter(t => t.id !== id);
+    if (tabs.length === 0) {
+      addTab({ id: Date.now(), title: 'New Tab', url: 'about:blank', favicon: '' });
+    } else if (activeTabId === id) {
+      activeTabId = tabs[0].id;
+      renderTabs();
+      syncWebview();
+    } else {
+      renderTabs();
+    }
+  }
+
+  function switchTab(id) {
+    activeTabId = id;
+    renderTabs();
+    syncWebview();
+  }
+
+  function syncWebview() {
+    const tab = tabs.find(t => t.id === activeTabId);
+    if (!tab) return;
+    if (tab.url === 'about:blank' || !tab.url) {
+      showNewTab();
+    } else {
+      showWebview();
+      try { webview.loadURL(tab.url); } catch {}
+      urlbar.value = tab.url;
+    }
+    appTitle.textContent = tab.title || 'Chromium Browser Pro';
+  }
+
+  function showWebview() {
+    newtabPage.classList.add('hidden');
+    webview.classList.remove('hidden');
+  }
+  function showNewTab() {
+    newtabPage.classList.remove('hidden');
+    webview.classList.add('hidden');
+  }
+
+  const links = [
+    { name: 'Google', url: 'https://google.com', icon: '🔍' },
+    { name: 'YouTube', url: 'https://youtube.com', icon: '▶' },
+    { name: 'GitHub', url: 'https://github.com', icon: '⌨' },
+    { name: 'Wikipedia', url: 'https://wikipedia.org', icon: '📖' },
+    { name: 'Reddit', url: 'https://reddit.com', icon: '🧡' },
+    { name: 'Twitter', url: 'https://twitter.com', icon: '🐦' },
+    { name: 'Netflix', url: 'https://netflix.com', icon: '🎬' },
+    { name: 'Amazon', url: 'https://amazon.com', icon: '📦' }
+  ];
+  quickLinks.innerHTML = links.map(l => '<a class="quick-link" href="' + l.url + '" onclick="event.preventDefault(); navigateTo(\'' + l.url + '\')"><div class="icon">' + l.icon + '</div><div>' + l.name + '</div></a>').join('');
 
   webview.addEventListener('did-start-loading', () => {
-    loading.classList.remove('hidden'); goBtn.disabled = true;
+    loading.classList.remove('hidden');
+    goBtn.disabled = true;
   });
   webview.addEventListener('did-stop-loading', () => {
-    loading.classList.add('hidden'); goBtn.disabled = false;
-    updateUrl(); updateTitle(); updateNavButtons();
+    loading.classList.add('hidden');
+    goBtn.disabled = false;
+    try { urlbar.value = webview.getURL() || ''; } catch {}
+    try {
+      const t = tabs.find(tab => tab.id === activeTabId);
+      if (t) { t.url = webview.getURL() || ''; t.title = webview.getTitle() || 'New Tab'; }
+    } catch {}
+    appTitle.textContent = (tabs.find(t => t.id === activeTabId) || {}).title || 'Chromium Browser Pro';
+    renderTabs();
+    updateNavButtons();
   });
   webview.addEventListener('did-fail-load', () => {
-    loading.classList.add('hidden'); goBtn.disabled = false;
+    loading.classList.add('hidden');
+    goBtn.disabled = false;
   });
   webview.addEventListener('dom-ready', () => {
-    updateUrl(); updateTitle(); updateNavButtons();
+    updateNavButtons();
+    try {
+      const t = tabs.find(tab => tab.id === activeTabId);
+      if (t) { t.title = webview.getTitle() || 'New Tab'; }
+    } catch {}
+    renderTabs();
   });
-  webview.addEventListener('page-title-updated', (e) => { updateTitle(e.title); });
+  webview.addEventListener('page-title-updated', (e) => {
+    appTitle.textContent = e.title || 'Chromium Browser Pro';
+    const t = tabs.find(tab => tab.id === activeTabId);
+    if (t) t.title = e.title;
+    renderTabs();
+  });
 
-  function updateUrl() { try { urlbar.value = webview.getURL() || ''; } catch {} }
-  function updateTitle(t) {
-    appTitle.textContent = t || 'Chromium Browser';
-    const activeTab = document.querySelector('.tab.active .tab-title');
-    if (activeTab) activeTab.textContent = t || 'New Tab';
-  }
   function updateNavButtons() {
     backBtn.disabled = !webview.canGoBack();
     forwardBtn.disabled = !webview.canGoForward();
   }
-  window.addEventListener('DOMContentLoaded', () => { updateNavButtons(); });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    renderTabs();
+    updateNavButtons();
+    showNewTab();
+  });
 </script>
 </body>
 </html>

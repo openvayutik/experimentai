@@ -1,8 +1,8 @@
 {
-  "name": "chromium-browser-app",
-  "productName": "Chromium Browser",
-  "version": "1.0.0",
-  "description": "A fully usable Chromium-based browser for Windows",
+  "name": "chromium-browser-pro",
+  "productName": "Chromium Browser Pro",
+  "version": "2.0.0",
+  "description": "A fully usable, professional Chromium-based browser for Windows",
   "main": "main.js",
   "author": "Cline",
   "scripts": {
@@ -11,8 +11,8 @@
     "dist": "electron-builder --win"
   },
   "build": {
-    "appId": "com.cline.chromiumbrowser",
-    "productName": "Chromium Browser",
+    "appId": "com.cline.chromiumbrowserpro",
+    "productName": "Chromium Browser Pro",
     "win": {
       "target": "nsis",
       "icon": "assets/icon.ico"
@@ -22,7 +22,8 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Chromium Browser"
+      "shortcutName": "Chromium Browser Pro",
+      "menuCategory": true
     }
   },
   "devDependencies": {

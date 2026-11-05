@@ -1,100 +1,114 @@
-const { app, BrowserWindow, ipcMain, session, shell, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
 const path = require('path');
 
 let mainWindow;
-const windows = [];
 
-function createWindow(file = 'index.html') {
-  const win = new BrowserWindow({
-    width: 1200,
+function createWindow() {
+  mainWindow = new BrowserWindow({
+    width: 1280,
     height: 800,
-    minWidth: 800,
+    minWidth: 900,
     minHeight: 600,
-    titleBarStyle: 'default',
+    titleBarStyle: 'hidden',
+    title: 'Chromium Browser Pro',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     },
     icon: path.join(__dirname, 'assets', 'icon.ico'),
-    show: false
+    show: false,
+    backgroundColor: '#0f172a'
   });
 
-  win.loadFile(file);
+  mainWindow.loadFile('index.html');
 
-  win.once('ready-to-show', () => win.show());
+  mainWindow.once('ready-to-show', () => mainWindow.show());
 
-  win.webContents.setWindowOpenHandler(({ url }) => {
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
     return { action: 'deny' };
   });
 
-  win.on('closed', () => {
-    const idx = windows.indexOf(win);
-    if (idx !== -1) windows.splice(idx, 1);
+  mainWindow.on('closed', () => {
+    mainWindow = null;
   });
-
-  windows.push(win);
-  return win;
 }
 
-app.whenReady().then(() => {
-  mainWindow = createWindow();
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) mainWindow = createWindow();
-  });
-});
+app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-// IPC: navigate
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+});
+
 ipcMain.on('navigate', (event, url) => {
   const win = BrowserWindow.fromWebContents(event.sender);
-  if (win && win.webContents) {
+  if (win && !win.isDestroyed()) {
     win.webContents.loadURL(url).catch(() => {});
   }
 });
 
-// IPC: go back
 ipcMain.on('go-back', (event) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   if (win) win.webContents.goBack();
 });
 
-// IPC: go forward
 ipcMain.on('go-forward', (event) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   if (win) win.webContents.goForward();
 });
 
-// IPC: reload
 ipcMain.on('reload', (event) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   if (win) win.webContents.reload();
 });
 
-// IPC: new window
-ipcMain.on('new-window', () => {
-  createWindow();
+ipcMain.on('new-tab', () => {
+  if (mainWindow) mainWindow.webContents.send('add-tab');
 });
 
-// IPC: open devtools
+ipcMain.on('close-tab', (event, tabId) => {
+  if (mainWindow) mainWindow.webContents.send('remove-tab', tabId);
+});
+
+ipcMain.on('switch-tab', (event, tabId) => {
+  if (mainWindow) mainWindow.webContents.send('active-tab', tabId);
+});
+
 ipcMain.on('open-devtools', (event) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   if (win) win.webContents.openDevTools();
 });
 
-// IPC: external link
+ipcMain.on('toggle-theme', (event) => {
+  if (mainWindow) mainWindow.webContents.send('theme-toggled');
+});
+
 ipcMain.on('open-external', (event, url) => {
   shell.openExternal(url);
 });
 
-// IPC: save dialog
 ipcMain.handle('save-dialog', async (event, defaultPath) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   const result = await dialog.showSaveDialog(win, { defaultPath });
   return result;
+});
+
+ipcMain.on('minimize', (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) win.minimize();
+});
+
+ipcMain.on('maximize', (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) win.isMaximized() ? win.unmaximize() : win.maximize();
+});
+
+ipcMain.on('close-app', (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) win.close();
 });
